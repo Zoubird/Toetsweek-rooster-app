@@ -7,7 +7,7 @@ class Scheduler():
         self.room_schedule = {
             "Mon": {
                 1: [{"room": 002, "class": "3A"}, {"room": 112, "class": "2B"}],
-                2: [{"room": 009, "class": "2A"}, {"room": 1123, "class": "1B"}],
+                2: [{"room": 009, "class": "2A"}, {"room": 113, "class": "1B"}],
                 3: [],
                 4: [],
                 5: [],
@@ -20,90 +20,55 @@ class Scheduler():
         pass
 
 class TimeTable():
-    def __init__(self, year, letter):
-        self.year = year
-        self.letter = letter
-        self.timetable = {
-            "Mon": {
-                    1: {"sub": None, "teach": None, "room": None},
-                    2: {"sub": None, "teach": None, "room": None},
-                    3: {"sub": None, "teach": None, "room": None},
-                    4: {"sub": None, "teach": None, "room": None},
-                    5: {"sub": None, "teach": None, "room": None},
-                    6: {"sub": None, "teach": None, "room": None},
-                    7: {"sub": None, "teach": None, "room": None}},
-            "Tue": {
-                    1: {"sub": None, "teach": None, "room": None},
-                    2: {"sub": None, "teach": None, "room": None},
-                    3: {"sub": None, "teach": None, "room": None},
-                    4: {"sub": None, "teach": None, "room": None},
-                    5: {"sub": None, "teach": None, "room": None},
-                    6: {"sub": None, "teach": None, "room": None},
-                    7: {"sub": None, "teach": None, "room": None}},
-            "Wed": {
-                    1: {"sub": None, "teach": None, "room": None},
-                    2: {"sub": None, "teach": None, "room": None},
-                    3: {"sub": None, "teach": None, "room": None},
-                    4: {"sub": None, "teach": None, "room": None},
-                    5: {"sub": None, "teach": None, "room": None},
-                    6: {"sub": None, "teach": None, "room": None},
-                    7: {"sub": None, "teach": None, "room": None}},
-            "Thu": {
-                    1: {"sub": None, "teach": None, "room": None},
-                    2: {"sub": None, "teach": None, "room": None},
-                    3: {"sub": None, "teach": None, "room": None},
-                    4: {"sub": None, "teach": None, "room": None},
-                    5: {"sub": None, "teach": None, "room": None},
-                    6: {"sub": None, "teach": None, "room": None},
-                    7: {"sub": None, "teach": None, "room": None}},
-            "Fri": {
-                    1: {"sub": None, "teach": None, "room": None},
-                    2: {"sub": None, "teach": None, "room": None},
-                    3: {"sub": None, "teach": None, "room": None},
-                    4: {"sub": None, "teach": None, "room": None}, 
-                    5: {"sub": None, "teach": None, "room": None},
-                    6: {"sub": None, "teach": None, "room": None},
-                    7: {"sub": None, "teach": None, "room": None}}
-        }
+    pass
 
-    def place_subject(self, day, period, lecture):
-        # Check for necessary variables (will be removed later and checked elsewhere)
-        assert day
-        assert period
-        assert lecture
-        if self.timetable[day][period]["sub"] is None:
-            if self._check_prof_sub(day, period):
-                if self._check_languages(day, period):
-                    self._alter_timetable(day, period, lecture)
-
-    
-    def _check_languages(self, day, period):
-        # Two languages cannot be back-to-back
-        pass
-    
-    def _check_prof_sub(self, day, period):
-        # Two profilesubject cannot be back-to-back
-        pass
-
-    def _alter_timetable(self, day, period, lecture):
-        # Schedule a subject at the desired period
-        self.timetable[day][period] = lecture
+class Exam():
+    def __init__(self,group,day,period,subject,duration,room,supervisor):
+        self.group = group
+        self.day = day
+        self.period = period
+        self.subject = subject
+        self.duration = duration
+        self.room = room
+        self.supervisor = supervisor
 
 
 school = {
   "Year1": {
-    "ClassA": TimeTable(1, 'A'),
-    "ClassB": TimeTable(1, 'B'),
-    "ClassC": TimeTable(1, 'C')
-  },
-  "Year2": {
-    "ClassA": TimeTable(2, 'A'),
-    "ClassB": TimeTable(2, 'B'),
-    "ClassC": TimeTable(2, 'C')
-  },
-  "Year3": {
-    "ClassA": TimeTable(3, 'A'),
-    "ClassB": TimeTable(3, 'B'),
-    "ClassC": TimeTable(3, 'C')
-  }
+        "Vwo": {-
+            "A": TimeTable(1, 'A'),
+            "B": TimeTable(1, 'B'),
+            "C": TimeTable(1, 'C') 
+        },
+        "Havo": 
+        {
+            "A": TimeTable(1, 'A'),
+            "B": TimeTable(1, 'B'),
+            "C": TimeTable(1, 'C'),
+            "D": TimeTable(1, 'D')
+        }
+    },
+    "Year2": {
+        "Vwo": {
+            "A": TimeTable(2, 'A'),
+            "B": TimeTable(2, 'B'),
+            "C": TimeTable(2, 'C')
+        },
+        "Havo": {
+            "A": TimeTable(2, 'A'),
+            "B": TimeTable(2, 'B'),
+            "C": TimeTable(2, 'C')
+        }
+    },
+    "Year3": {
+        "Vwo": {
+            "A": TimeTable(3, 'B'),
+            "B": TimeTable(3, 'A')
+        },
+        "Havo": {
+            "A": TimeTable(3, 'A'),
+            "B": TimeTable(3, 'B'),
+            "C": TimeTable(3, 'C')
+        }
+    }
 }
