@@ -1,11 +1,15 @@
+from other.helpers import Group, Exam, ConstraintsChecker
+from other.vars import classes
+
 class Scheduler():
     def __init__(self):
-        # Available classrooms (these are not all the rooms, more will be included later)
-        self.av_rooms = [002, 009, 010, 011, 012, 106, 108, 112, 113, 114, 115, 116, 201, 202, 203, 204, 205]
+        self.lower_classes = []
+        self.pending_exams = []
+        self.av_rooms = ["002", "009", "010", "011", "012", "106", "108", "112", "113", "114", "115", "116", "201", "202", "203", "204", "205"]
         self.room_schedule = {
             "Mon": {
-                1: [Exam(room=108, group="3VA"), Exam(room=116, group="2HB")],
-                2: [{"room": 009, "class": "2A"}, {"room": 113, "class": "1B"}],
+                1: [],
+                2: [],
                 3: [],
                 4: [],
                 5: [],
@@ -13,8 +17,8 @@ class Scheduler():
                 7: []
             },
             "Tu": {
-                1: [Exam(room=108, group="3VA"), Exam(room=116, group="2HB")],
-                2: [{"room": 009, "class": "2A"}, {"room": 113, "class": "1B"}],
+                1: [],
+                2: [],
                 3: [],
                 4: [],
                 5: [],
@@ -22,8 +26,8 @@ class Scheduler():
                 7: []
             },
             "Wed": {
-                1: [Exam(room=108, group="3VA"), Exam(room=116, group="2HB")],
-                2: [{"room": 009, "class": "2A"}, {"room": 113, "class": "1B"}],
+                1: [],
+                2: [],
                 3: [],
                 4: [],
                 5: [],
@@ -31,8 +35,8 @@ class Scheduler():
                 7: []
             },
             "Thu": {
-                1: [Exam(room=108, group="3VA"), Exam(room=116, group="2HB")],
-                2: [{"room": 009, "class": "2A"}, {"room": 113, "class": "1B"}],
+                1: [],
+                2: [],
                 3: [],
                 4: [],
                 5: [],
@@ -40,8 +44,8 @@ class Scheduler():
                 7: []
             },
             "Fri": {
-                1: [Exam(room=108, group="3VA"), Exam(room=116, group="2HB")],
-                2: [{"room": 009, "class": "2A"}, {"room": 113, "class": "1B"}],
+                1: [],
+                2: [],
                 3: [],
                 4: [],
                 5: [],
@@ -49,61 +53,26 @@ class Scheduler():
                 7: []
             }
         }
+    
+    def _create_groups(self):
+        """Finished, but might add functionality later to use userinput for the amount of classes in vars.classes instead of hardcoded values"""
+        counter = 1
+        for i in range (1, 4):
+            for j in ["H", "V"]:
+                for k in range(classes[i][0][j]):
+                    ch = ["A", "B", "C", "D", "E", "F"]
+                    self.lower_classes.append(Group(group=f"{i}{j}{ch[k]}", id=counter, subjects=classes[i][1]))
+                    counter += 1
+
+        for group in self.lower_classes:
+            print(f"{group}:")
+            print(group.subjects)
+
+    def _create_exams(self):
+        pass
 
     def _ext_data_form(self):
         # Later, this function will serve purpose to extract data from the data that has been provided by someone using the algo
         pass
 
-class TimeTable():
-    pass
-
-class Exam():
-    def __init__(self,group,day,period,subject,duration,room,supervisor):
-        self.group = group
-        self.day = day
-        self.period = period
-        self.subject = subject
-        self.duration = duration
-        self.room = room
-        self.supervisor = supervisor
-
-
-school = {
-  "Year1": {
-        "Vwo": {-
-            "A": TimeTable(1, 'A'),
-            "B": TimeTable(1, 'B'),
-            "C": TimeTable(1, 'C') 
-        },
-        "Havo": 
-        {
-            "A": TimeTable(1, 'A'),
-            "B": TimeTable(1, 'B'),
-            "C": TimeTable(1, 'C'),
-            "D": TimeTable(1, 'D')
-        }
-    },
-    "Year2": {
-        "Vwo": {
-            "A": TimeTable(2, 'A'),
-            "B": TimeTable(2, 'B'),
-            "C": TimeTable(2, 'C')
-        },
-        "Havo": {
-            "A": TimeTable(2, 'A'),
-            "B": TimeTable(2, 'B'),
-            "C": TimeTable(2, 'C')
-        }
-    },
-    "Year3": {
-        "Vwo": {
-            "A": TimeTable(3, 'B'),
-            "B": TimeTable(3, 'A')
-        },
-        "Havo": {
-            "A": TimeTable(3, 'A'),
-            "B": TimeTable(3, 'B'),
-            "C": TimeTable(3, 'C')
-        }
-    }
-}
+Scheduler()._create_groups()
