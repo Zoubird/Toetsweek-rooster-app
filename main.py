@@ -71,8 +71,12 @@ class Scheduler():
     def _create_exams(self):
         pass
 
+    def _place_exam(self):
+        pass
+    
     def _ext_data_form(self):
         # Later, this function will serve purpose to extract data from the data that has been provided by someone using the algo
         pass
 
 Scheduler()._create_groups()
+
