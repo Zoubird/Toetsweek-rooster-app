@@ -1,10 +1,11 @@
 from other.helpers import Group, Exam, ConstraintsChecker
 from other.vars import classes
+import random
 
 class Scheduler():
     def __init__(self):
         self.lower_classes = []
-        self.pending_exams = []
+        self.pending_exams = {}
         self.av_rooms = ["002", "009", "010", "011", "012", "106", "108", "112", "113", "114", "115", "116", "201", "202", "203", "204", "205"]
         self.room_schedule = {
             "Mon": {
@@ -64,19 +65,20 @@ class Scheduler():
                     self.lower_classes.append(Group(group=f"{i}{j}{ch[k]}", id=counter, subjects=classes[i][1]))
                     counter += 1
 
-        for group in self.lower_classes:
-            print(f"{group}:")
-            print(group.subjects)
-
     def _create_exams(self):
-        pass
+        for group in self.lower_classes:
+            self.pending_exams[group] = []
+            for sub in group.subjects:
+                exam = Exam(group.id, None, None, sub, None, None, None)
+                self.pending_exams[group].append(exam)
 
     def _place_exam(self):
         pass
-    
+
     def _ext_data_form(self):
         # Later, this function will serve purpose to extract data from the data that has been provided by someone using the algo
         pass
 
-Scheduler()._create_groups()
-
+sched = Scheduler()
+sched._create_groups()
+sched._create_exams()
