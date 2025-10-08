@@ -51,3 +51,6 @@ schedule = {
         7: []
     }
 }
+
+ex_gr = {"Mon": 0, "Tu": 0, "Wed": 0, "Thu": 0, "Fri": 0}
+
