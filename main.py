@@ -7,8 +7,6 @@ class Scheduler():
         # Initiate class variables
         self.lower_classes = [] # All group objects are stored here from grade 1 to 3
         self.pending_exams = {} # All exams that have yet to be planned are stored here per group
-        # Available rooms
-        self.av_rooms = ["002", "009", "010", "011", "012", "106", "108", "112", "113", "114", "115", "116", "201", "202", "203", "204", "205"]
         self.schedule = copy.deepcopy(schedule) # The schedule in which exams will be planned in
     
     def _create_groups(self):
@@ -18,7 +16,8 @@ class Scheduler():
             for j in ["H", "V"]: # Per loop, go through Havo and Vwo
                 for k in range(classes[i][0][j]):
                     ch = ["A", "B", "C", "D", "E", "F"] # Add letter to group
-                    self.lower_classes.append(Group(group=f"{i}{j}{ch[k]}", id=counter, subjects=classes[i][1])) # Create group and add to lower_classes
+                    # Create group and add to lower_classes
+                    self.lower_classes.append(Group(group=f"{i}{j}{ch[k]}", id=counter, subjects=classes[i][1]))
                     counter += 1
 
     def _create_exams(self):
@@ -29,12 +28,12 @@ class Scheduler():
                 exam = Exam(group.id, None, None, sub, None, None, None)
                 self.pending_exams[group].append(exam)
 
-    def _place_exam(self, exam, time, room):
+    def _place_exam(self, exam, day, period, room):
         # Assign exam class variables and place it in the schedule
         exam.room = room
-        exam.day = time[0]
-        exam.period = time[1]
-        self.schedule[time[0]][time[1]].append(exam)
+        exam.day = day
+        exam.period = period
+        self.schedule[day][period]["exams"].append(exam)
 
     def _check_exam(self, pend_exam, lis):
         # Loops through all the exams scheduled at a given period
@@ -45,6 +44,22 @@ class Scheduler():
         # Return False if no conflict found
         return False
 
+    def _loop_periods(self, periods, pending_exam, day, group, exams_p_day):
+        # Loop through the periods
+        for period, info in periods.items():
+            # Check if theres already an exam of that group in that period
+            if self._check_exam(pending_exam, info["exams"]):
+                continue  # conflict, try next period
+            if not info["rooms"]:  # in case all rooms taken
+                continue
+            # spot is free, place exam
+            room = random.choice(info["rooms"])
+            self._place_exam(pending_exam, day, period, room)
+            info["rooms"].remove(room)
+            exams_p_day[group][day] += 1
+            return True  # success
+        return False  # couldn't place
+
     def _exams(self):
         # Tracks exams per day per group
         exams_per_day = {}
@@ -52,26 +67,13 @@ class Scheduler():
             # Adds dict with group and days to exams_per_day
             exams_per_day[group] = copy.deepcopy(ex_gr)
             for pend_exam in pend_exams:
-                # Random room
-                room = random.choice(self.av_rooms)
                 # Loop through the week
                 for day, periods in self.schedule.items():
                     # Check if this group already has 2 exams planned on this day
                     if exams_per_day[group][day] >= 2:
                         continue # Skip to next iteration (day) to loop through
-                    else: 
-                        # Loop through the lesuren
-                        for period, lis in periods.items():
-                            # Check if theres already an exam of that group in that period
-                            if self._check_exam(pend_exam, lis):
-                                continue  # conflict, try next period
-                            # spot is free, place exam
-                            self._place_exam(pend_exam, (day, period), room)
-                            exams_per_day[group][day] += 1
-                            break  # stop looping periods for this exam
-                        else:
-                            continue  # only triggered if inner loop didn't break
-                    break  # stop looping days if exam placed
+                    if self._loop_periods(periods=periods, pending_exam=pend_exam, day=day, group=group, exams_p_day=exams_per_day):
+                        break
         
         # AI generated these to make the dictionaries readable in terminal
         pretty_print_schedule(self.schedule)
