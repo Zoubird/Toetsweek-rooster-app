@@ -30,8 +30,9 @@ class ConstraintsChecker():
 def pretty_print_schedule(schedule):
     for day, periods in schedule.items():
         print(f"{day}:")
-        for period, exams in periods.items():
-            exam_strs = [f"{exam.subject} (Group {exam.group_id})" for exam in exams]
+        for period, info in periods.items():
+            info = info["exams"]
+            exam_strs = [f"{exam.subject} (Group {exam.group_id})" for exam in info]
             print(f"  Period {period}: {', '.join(exam_strs) if exam_strs else 'No exams'}")
         print()  # blank line between days
 
