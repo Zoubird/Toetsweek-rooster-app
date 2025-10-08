@@ -20,6 +20,25 @@ class Exam():
         self.room = room
         self.supervisor = supervisor
 
+    def __repr__(self):
+        return f"Exam {self.subject} group {self.group_id}"
+
 class ConstraintsChecker():
     def __init__(self):
         pass
+
+def pretty_print_schedule(schedule):
+    for day, periods in schedule.items():
+        print(f"{day}:")
+        for period, exams in periods.items():
+            exam_strs = [f"{exam.subject} (Group {exam.group_id})" for exam in exams]
+            print(f"  Period {period}: {', '.join(exam_strs) if exam_strs else 'No exams'}")
+        print()  # blank line between days
+
+
+def pretty_print_group_counts(group_counts):
+    for group, days in group_counts.items():
+        print(f"{group}:")
+        for day, count in days.items():
+            print(f"  {day}: {count} exams")
+        print()  # blank line between groups
