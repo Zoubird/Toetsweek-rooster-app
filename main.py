@@ -5,6 +5,7 @@ import random, copy
 class Scheduler():
     def __init__(self):
         # Initiate class variables
+        self.constraint_checker = ConstraintsChecker() # Object to check constraints
         self.lower_classes = [] # All group objects are stored here from grade 1 to 3
         self.pending_exams = {} # All exams that have yet to be planned are stored here per group
         self.schedule = copy.deepcopy(schedule) # The schedule in which exams will be planned in
@@ -45,8 +46,11 @@ class Scheduler():
         return False
 
     def _loop_periods(self, periods, pending_exam, day, group, exams_p_day):
+        """Loops through the periods of a day for a specific exam"""
         # Loop through the periods
         for period, info in periods.items():
+            if self.constraint_checker.check_language(pending_exam, self.schedule, day, period):
+                break
             # Check if theres already an exam of that group in that period
             if self._check_exam(pending_exam, info["exams"]):
                 continue  # conflict, try next period
