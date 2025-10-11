@@ -20,12 +20,26 @@ class Exam():
         self.room = room
         self.supervisor = supervisor
 
-    def __repr__(self):
-        return f"Exam {self.subject} group {self.group_id}"
+# class Subject():
+#     def __init__(self,name,duration,taal):
+#         self.name = name
+#         self.duration = duration
+#         self.taal = (True if name in ["netl", "entl", "fatl", "dutl", "sptl"] else False)
 
 class ConstraintsChecker():
     def __init__(self):
         pass
+
+    def check_language(self, exam, schedule, day, period):
+        if exam.subject in ["netl", "entl", "fatl", "dutl", "sptl"]:  # If the subject is a language
+            if period == 1:
+                return False
+            period_before = period - 1
+            for test in schedule[day][period_before]["exams"]:
+                if test.group_id == exam.group_id:
+                    if test.subject in ["netl", "entl", "fatl", "dutl", "sptl"]:
+                        return True
+        return False  # No constraints violated
 
 def pretty_print_schedule(schedule):
     for day, periods in schedule.items():
