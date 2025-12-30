@@ -81,11 +81,24 @@ class Scheduler():
     def _exams(self):
         # Tracks exams per day per group
         exams_per_day = {}
-        for group, pend_exams in self.pending_exams.items():
-            # Adds dict with group and days to exams_per_day
+        for group in self.pending_exams.keys():
             exams_per_day[group] = copy.deepcopy(exams_group)
+        
+        # Flatten all exams into one list with their groups
+        all_exams = []
+        for group, pend_exams in self.pending_exams.items():
             for pend_exam in pend_exams:
-                if self._loop_through_week(exams_per_day, group, pend_exam): continue
+                all_exams.append((group, pend_exam))
+        
+        # Sort by duration (desc), then by group's total exam count (desc)
+        all_exams.sort(key=lambda x: (
+            -x[1].duration,
+            -len(self.pending_exams[x[0]])
+        ))
+        
+        # Place exams in sorted order
+        for group, pend_exam in all_exams:
+            self._loop_through_week(exams_per_day, group, pend_exam)
 
         # AI generated these to make the dictionaries readable in terminal
         pretty_print_schedule(self.schedule, self.lower_classes)
