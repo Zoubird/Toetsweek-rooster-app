@@ -36,6 +36,10 @@ class Helpers():
                 duration = data[group.group][sub]
                 exam = Exam(group.id, None, None, sub, duration, None, None)
                 pending_exams[group].append(exam)
+
+                # Sort this group's exams by duration (longest first)
+                pending_exams[group].sort(key=lambda exam: -exam.duration)
+                
         return pending_exams
 
 def pretty_print_schedule(schedule, low):
