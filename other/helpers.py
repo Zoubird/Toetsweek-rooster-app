@@ -1,31 +1,3 @@
-class Group():
-    def __init__(self,group,id,subjects):
-        self.id = id
-        self.group = group
-        self.subjects = subjects
-
-    def __str__(self):
-        return f"Group {self.group}, with ID {self.id}"
-    
-    def __repr__(self):
-        return f"Group {self.group} with ID {self.id}"
-
-class Exam():
-    def __init__(self,group_id,day,period,subject,duration,room,supervisor):
-        self.group_id = group_id
-        self.day = day
-        self.period = period
-        self.subject = subject
-        self.duration = duration
-        self.room = room
-        self.supervisor = supervisor
-
-# class Subject():
-#     def __init__(self,name,duration,taal):
-#         self.name = name
-#         self.duration = duration
-#         self.taal = (True if name in ["netl", "entl", "fatl", "dutl", "sptl"] else False)
-
 class ConstraintsChecker():
     def __init__(self):
         pass
@@ -40,13 +12,43 @@ class ConstraintsChecker():
                     if test.subject in ["netl", "entl", "fatl", "dutl", "sptl"]:
                         return True
         return False  # No constraints violated
+    
+class Helpers():
+    def _create_groups(self, classes, Group):
+        """Finished, but might add functionality later to use userinput for the amount of classes in vars.classes instead of hardcoded values"""
+        counter = 1
+        lower_classes = []
+        for i in range (1, 4): # Loop 3 times
+            for j in ["H", "V"]: # Per loop, go through Havo and Vwo
+                for k in range(classes[i][0][j]):
+                    ch = ["A", "B", "C", "D", "E", "F"] # Add letter to group
+                    # Create group and add to lower_classes
+                    lower_classes.append(Group(group=f"{i}{j}{ch[k]}", id=counter, subjects=classes[i][1]))
+                    counter += 1
+        return lower_classes
+    
+    def _create_exams(self, lower_classes, data, Exam):
+        pending_exams = {}
+        for group in lower_classes: # Loops through all groups
+            pending_exams[group] = [] # Create a new key-value pair in pending exams with the key as the group
+            for sub in group.subjects: # Loops through each subject a group has
+                # Create an exam object for the subject and add it to a groups exams in pending_exams
+                duration = data[group.group][sub]
+                exam = Exam(group.id, None, None, sub, duration, None, None)
+                pending_exams[group].append(exam)
+        return pending_exams
 
-def pretty_print_schedule(schedule):
+def pretty_print_schedule(schedule, low):
     for day, periods in schedule.items():
         print(f"{day}:")
         for period, info in periods.items():
             info = info["exams"]
-            exam_strs = [f"{exam.subject} (Group {exam.group_id})" for exam in info]
+            exam_strs = []
+            for exam in info:
+                for i in low:
+                    if i.id == exam.group_id:
+                        group = i.group
+                exam_strs.append(f"{exam.subject} (Group {group})")
             print(f"  Period {period}: {', '.join(exam_strs) if exam_strs else 'No exams'}")
         print()  # blank line between days
 
