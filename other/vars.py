@@ -3,6 +3,25 @@ classes = {
     2: [{"H": 3, "V": 3}, ["netl", "entl", "fatl", "dutl", "sptl", "ges", "bio", "ak", "nask", "wis"]],
     3: [{"H": 3, "V": 2}, ["netl", "entl", "fatl", "dutl", "sptl", "eco", "ges", "nat", "sch", "wis"]]
 }
+data = {'1HA': {'netl': 2, 'entl': 3, 'fatl': 1, 'sptl': 1, 'ges': 1, 'bio': 2, 'ak': 1, 'wis': 3},
+        '1HB': {'netl': 2, 'entl': 2, 'fatl': 1, 'sptl': 1, 'ges': 1, 'bio': 2, 'ak': 2, 'wis': 2},
+        '1HC': {'netl': 2, 'entl': 1, 'fatl': 1, 'sptl': 1, 'ges': 1, 'bio': 1, 'ak': 1, 'wis': 1},
+        '1HD': {'netl': 1, 'entl': 1, 'fatl': 1, 'sptl': 1, 'ges': 1, 'bio': 1, 'ak': 1, 'wis': 1},
+        '1VA': {'netl': 1, 'entl': 1, 'fatl': 1, 'sptl': 1, 'ges': 1, 'bio': 1, 'ak': 1, 'wis': 1},
+        '1VB': {'netl': 1, 'entl': 1, 'fatl': 1, 'sptl': 1, 'ges': 1, 'bio': 1, 'ak': 1, 'wis': 2},
+        '1VC': {'netl': 1, 'entl': 1, 'fatl': 1, 'sptl': 1, 'ges': 1, 'bio': 1, 'ak': 1, 'wis': 2},
+        '2HA': {'netl': 2, 'entl': 1, 'fatl': 1, 'dutl': 1, 'sptl': 1, 'ges': 1, 'bio': 2, 'ak': 1, 'nask': 1, 'wis': 2},
+        '2HB': {'netl': 2, 'entl': 2, 'fatl': 2, 'dutl': 2, 'sptl': 2, 'ges': 2, 'bio': 2, 'ak': 1, 'nask': 1, 'wis': 2},
+        '2HC': {'netl': 1, 'entl': 1, 'fatl': 1, 'dutl': 1, 'sptl': 1, 'ges': 2, 'bio': 2, 'ak': 1, 'nask': 1, 'wis': 1},
+        '2VA': {'netl': 1, 'entl': 1, 'fatl': 1, 'dutl': 1, 'sptl': 1, 'ges': 1, 'bio': 1, 'ak': 1, 'nask': 1, 'wis': 1},
+        '2VB': {'netl': 2, 'entl': 2, 'fatl': 2, 'dutl': 2, 'sptl': 2, 'ges': 2, 'bio': 2, 'ak': 2, 'nask': 3, 'wis': 3},
+        '2VC': {'netl': 1, 'entl': 1, 'fatl': 1, 'dutl': 1, 'sptl': 2, 'ges': 2, 'bio': 2, 'ak': 2, 'nask': 2, 'wis': 2},
+        '3HA': {'netl': 1, 'entl': 1, 'fatl': 1, 'dutl': 1, 'sptl': 1, 'eco': 1, 'ges': 2, 'nat': 2, 'sch': 2, 'wis': 2},
+        '3HB': {'netl': 2, 'entl': 2, 'fatl': 2, 'dutl': 2, 'sptl': 2, 'eco': 2, 'ges': 2, 'nat': 2, 'sch': 2, 'wis': 2},
+        '3HC': {'netl': 2, 'entl': 2, 'fatl': 2, 'dutl': 2, 'sptl': 2, 'eco': 2, 'ges': 2, 'nat': 2, 'sch': 2, 'wis': 2},
+        '3VA': {'netl': 2, 'entl': 2, 'fatl': 2, 'dutl': 2, 'sptl': 2, 'eco': 2, 'ges': 2, 'nat': 2, 'sch': 2, 'wis': 3},
+        '3VB': {'netl': 3, 'entl': 3, 'fatl': 3, 'dutl': 3, 'sptl': 3, 'eco': 3, 'ges': 3, 'nat': 3, 'sch': 3, 'wis': 3}
+}
 
 schedule = {
     "Mon": {
@@ -52,6 +71,6 @@ schedule = {
     }
 }
 
-ex_gr = {"Mon": 0, "Tu": 0, "Wed": 0, "Thu": 0, "Fri": 0}
+exams_group = {"Mon": 0, "Tu": 0, "Wed": 0, "Thu": 0, "Fri": 0}
 
 
