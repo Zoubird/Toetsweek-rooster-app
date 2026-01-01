@@ -39,7 +39,7 @@ class Helpers():
 
                 # Sort this group's exams by duration (longest first)
                 pending_exams[group].sort(key=lambda exam: -exam.duration)
-                
+
         return pending_exams
 
 def pretty_print_schedule(schedule, low):
@@ -52,7 +52,8 @@ def pretty_print_schedule(schedule, low):
                 for i in low:
                     if i.id == exam.group_id:
                         group = i.group
-                exam_strs.append(f"{exam.subject} (Group {group})")
+                        room = exam.room
+                exam_strs.append(f"{exam.subject} (Group {group}) (room {room})")
             print(f"  Period {period}: {', '.join(exam_strs) if exam_strs else 'No exams'}")
         print()  # blank line between days
 
