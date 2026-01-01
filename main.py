@@ -14,13 +14,6 @@ class Scheduler():
         self.pending_exams = self.helpers._create_exams(self.lower_classes, data, Exam) # All exams that have yet to be planned are stored here per group
         self.schedule = copy.deepcopy(schedule) # The schedule in which exams will be planned in
 
-    def _place_exam(self, exam, day, period, room):
-        # Assign exam class variables and place it in the schedule
-        exam.room = room
-        exam.day = day
-        exam.period = period
-        self.schedule[day][period]["exams"].append(exam)
-
     def _check_exam(self, pend_exam, lis):
         # Loops through all the exams scheduled at a given period
         for exam in lis:
@@ -31,43 +24,64 @@ class Scheduler():
     
     def _loop_through_periods(self, periods, pending_exam, day, group, exams_p_day):
         """Loops through the periods of a day for a specific exam"""
-        # Loop through the periods
         for period, info in periods.items():
+            # Language constraint
             if self.constraint_checker.check_language(pending_exam, self.schedule, day, period):
                 break
+
             # Check if theres already an exam of that group in that period
             if self._check_exam(pending_exam, info["exams"]):
-                continue  # conflict, try next period
+                continue 
+
+            # Check if rooms are left
             if not info["rooms"]:  # in case all rooms taken
-                continue
+                continue    
+
+            # Check if it is a multihour exam
             duration = pending_exam.duration
             if duration > 1:
-                available = True
-                if period + duration - 1 > 7:
+                # Bounds check
+                if period + duration - 1 > self.MAX_PERIODS:
                     # Return instead of continuing since the exam can't be placed at all at this day
                     print(f"Couldnt place exam {pending_exam.subject} from {pending_exam.group_id}")
                     return False
+                
+                # Group conflict check
+                conflict = False
                 for i in range(period + 1, period + duration):
                     exams = self.schedule[day][i]["exams"]
                     if self._check_exam(pending_exam, exams):
-                        available = False
-                if available == False: continue
-                else: #placement logic
-                    for prd in range(period, period + duration):
-                        room = random.choice(self.schedule[day][prd]["rooms"])
-                        self._place_exam(pending_exam, day, prd, room)
-                        self.schedule[day][prd]["rooms"].remove(room)
-                        print(f"Placed exam {pending_exam.subject} duration {pending_exam.duration} in period {prd}")
-                    exams_p_day[group][day] += 1
-                    return True
-            else: 
-                # spot is free, place exam
-                room = random.choice(info["rooms"])
-                self._place_exam(pending_exam, day, period, room)
-                info["rooms"].remove(room)
+                        conflict = True
+                if conflict: continue
+
+                # room continuity check
+                room = self.assign_room_to_exam(day, period, pending_exam)
+                if room is None: continue
+                
+                # placement logic if exam passes all checks
+                for prd in range(period, period + duration):
+                    self._place_exam(pending_exam, day, prd, room)
                 exams_p_day[group][day] += 1
-                return True  # success
+                return True
+
+            # last check to see if theres a room available for this exam
+            room = self.assign_room_to_exam(day, period, pending_exam)
+            if room is None: continue
+
+            self._place_exam(pending_exam, day, period, room)
+            exams_p_day[group][day] += 1
+            return True  # success
+            
         return False  # couldn't place
+    
+    def _place_exam(self, exam, day, period, room):
+        # Assign exam class variables and place it in the schedule
+        assert room not in [e.room for e in self.schedule[day][period]["exams"]]
+        exam.room = room
+        exam.day = day
+        exam.period = period
+        self.schedule[day][period]["exams"].append(exam)
+        print(f"Placed exam {exam.subject} duration {exam.duration} in period {period} with room {exam.room}")
     
     def _loop_through_week(self, exams_per_day, group, pend_exam):
         # Loop through the week
@@ -78,7 +92,7 @@ class Scheduler():
             if self._loop_through_periods(periods=periods, pending_exam=pend_exam, day=day, group=group, exams_p_day=exams_per_day):
                 return True
 
-    def _exams(self):
+    def exams(self):
         # Tracks exams per day per group
         exams_per_day = {}
         for group in self.pending_exams.keys():
@@ -105,27 +119,25 @@ class Scheduler():
         print(self.lower_classes)
 
     def _find_common_room_for_exam(self, day, period, pending_exam):
-        duration = pending_exam.duration
-        day = self.schedule[day]
-        for room in day[period]["rooms"]:
-            room_works = True
-            # Check if the room is available in the next hour or two depending on the test duration
-            for i in range(duration):
-                # If its not available in the next hour or two, 
-                if room not in day[period+i]["rooms"]:
-                    room_works = False
+        day_schedule = self.schedule[day]
+        for room in day_schedule[period]["rooms"]:
+            conflict = False
+            for i in range(pending_exam.duration):
+                if room not in day_schedule[period + i]["rooms"]:
+                    conflict = True
                     break
-            if room_works:
+            if not conflict:
                 return room
         return None
 
     def assign_room_to_exam(self, day, period, pending_exam):
         room = self._find_common_room_for_exam(day, period, pending_exam)
-        if room == None:
-            return False
+        if room is None:
+            return None
         pending_exam.room = room
         for i in range(pending_exam.duration):
             self.schedule[day][period+i]["rooms"].remove(room)
+        return room
 
 sched = Scheduler()
-sched._exams()
+sched.exams()
