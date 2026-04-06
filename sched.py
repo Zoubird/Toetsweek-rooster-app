@@ -361,5 +361,7 @@ if __name__ == '__main__':
             "classes": {g: config["classes"][g] for g in config["selected_grades"] if g > 3 and g in config["classes"]}
         }
 
+        print (high_config)
+
         generate_timetable(UpperScheduler(config=high_config).exams(), title="Toetsweek rooster FULLY CLAUDE CODED HAHAHEZ",
                        output_path="./timetable.xlsx")
