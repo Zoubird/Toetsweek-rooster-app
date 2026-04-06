@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toetsweek Rooster</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #252525;
+    --border: #333;
+    --accent: #e8ff3d;
+    --accent2: #3dffb8;
+    --text: #f0f0f0;
+    --muted: #888;
+    --danger: #ff4d4d;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+
+  .logo-block h1 {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+  }
+
+  .logo-block span {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .step-indicator {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+
+  .step-dot.active { background: var(--accent); }
+  .step-dot.done   { background: var(--accent2); }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  .step { display: none; animation: fadeIn 0.25s ease; }
+  .step.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 28px;
+    line-height: 1.3;
+  }
+
+  h2 em { color: var(--accent); font-style: normal; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .grade-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+
+  .grade-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    padding: 18px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+
+  .grade-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .grade-btn.selected { background: var(--accent); color: #0f0f0f; border-color: var(--accent); }
+
+  label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="text"]:focus { border-color: var(--accent); }
+
+  .input-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+    font-family: var(--mono);
+  }
+
+  .tag-input-wrapper {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    cursor: text;
+    min-height: 46px;
+    transition: border-color 0.15s;
+  }
+
+  .tag-input-wrapper:focus-within { border-color: var(--accent); }
+
+  .room-tag {
+    background: var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .room-tag button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .room-tag button:hover { color: var(--danger); }
+
+  .tag-input {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    outline: none;
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .cluster-grade-section { margin-bottom: 20px; }
+
+  .cluster-grade-header {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent2);
+    margin-bottom: 10px;
+  }
+
+  .cluster-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cluster-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .cluster-item .subjects { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .cluster-subject-tag {
+    background: #2a2a2a;
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+
+  .add-cluster-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .add-cluster-row input { flex: 1; }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 11px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .btn-primary { background: var(--accent); color: #0f0f0f; }
+  .btn-primary:hover { background: #d4e835; }
+
+  .btn-secondary {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-danger {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--danger);
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .btn-danger:hover { border-color: var(--danger); }
+
+  .btn-icon {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .btn-icon:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .summary-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+
+  .summary-item .key {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .summary-item .val {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  /* spinner */
+  .progress-wrap {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 60px 0;
+    text-align: center;
+  }
+
+  .progress-wrap.visible { display: flex; }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .progress-text {
+    font-family: var(--mono);
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* success */
+  .success-block {
+    display: none;
+    text-align: center;
+    padding: 50px 0;
+  }
+
+  .success-block.visible { display: block; }
+
+  .success-icon { font-size: 64px; margin-bottom: 16px; }
+
+  .success-block h3 {
+    font-family: var(--mono);
+    font-size: 20px;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+
+  .success-block p {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    margin-bottom: 28px;
+  }
+
+  /* response preview */
+  .response-preview {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .response-preview.visible { display: block; }
+
+  .error-msg {
+    background: #2a1515;
+    border: 1px solid var(--danger);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--danger);
+    margin-top: 12px;
+    display: none;
+  }
+
+  .error-msg.visible { display: block; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-block">
+    <h1>TOETSWEEK</h1>
+    <span>Rooster Generator</span>
+  </div>
+  <div class="step-indicator" id="stepDots"></div>
+</header>
+
+<div class="container">
+
+  <!-- STEP 1: Grades -->
+  <div class="step active" id="step-1">
+    <p class="section-title">Stap 1 van 4</p>
+    <h2>Welke <em>klassen</em> plannen?</h2>
+    <div class="card">
+      <div class="card-label">Selecteer leerjaren</div>
+      <div class="grade-grid" id="gradeGrid"></div>
+      <div class="error-msg" id="gradeError">Selecteer minimaal één leerjaar.</div>
+    </div>
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-primary" onclick="goStep(2)">Volgende →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Rooms -->
+  <div class="step" id="step-2">
+    <p class="section-title">Stap 2 van 4</p>
+    <h2>Beschikbare <em>lokalen</em></h2>
+
+    <div id="roomsLow" class="card" style="display:none">
+      <div class="card-label">Onderbouw (leerjaar 1–3)</div>
+      <label>Lokalen — typ een lokaal en druk op Enter</label>
+      <div class="tag-input-wrapper" id="tagWrapLow" onclick="focusTagInput('tagInputLow')">
+        <input class="tag-input" id="tagInputLow" placeholder="bijv. 112" onkeydown="handleTagKey(event,'low')">
+      </div>
+      <div class="input-hint">Voer lokaalnummers in, één voor één.</div>
+    </div>
+
+    <div id="roomsHigh" class="card" style="display:none">
+      <div class="card-label">Bovenbouw (leerjaar 4–6)</div>
+      <label>Lokalen — typ een lokaal en druk op Enter</label>
+      <div class="tag-input-wrapper" id="tagWrapHigh" onclick="focusTagInput('tagInputHigh')">
+        <input class="tag-input" id="tagInputHigh" placeholder="bijv. 201" onkeydown="handleTagKey(event,'high')">
+      </div>
+      <div class="input-hint">Voer lokaalnummers in, één voor één.</div>
+    </div>
+
+    <div class="error-msg" id="roomError">Voeg minimaal één lokaal toe per geselecteerde afdeling.</div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goStep(1)">← Terug</button>
+      <button class="btn btn-primary" onclick="goStep(3)">Volgende →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Clusters -->
+  <div class="step" id="step-3">
+    <p class="section-title">Stap 3 van 4</p>
+    <h2>Clustervakken <em>bovenbouw</em></h2>
+
+    <div id="noClusters" class="card" style="display:none">
+      <div class="card-label">Niet van toepassing</div>
+      <p style="color:var(--muted); font-family:var(--mono); font-size:12px;">Geen bovenbouw geselecteerd — sla deze stap over.</p>
+    </div>
+
+    <div id="clustersSection" style="display:none">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-label">Wat zijn clustervakken?</div>
+        <p style="color:var(--muted); font-size:13px; line-height:1.6;">Vakken die altijd op dezelfde dag gepland worden (bijv. <code style="color:var(--accent2)">bio,nat</code>). Voeg per leerjaar clusters toe.</p>
+      </div>
+      <div id="clusterBuilder"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goStep(2)">← Terug</button>
+      <button class="btn btn-primary" onclick="goStep(4)">Volgende →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Send -->
+  <div class="step" id="step-4">
+    <p class="section-title">Stap 4 van 4</p>
+    <h2>Rooster <em>genereren</em></h2>
+
+    <div class="summary-grid" id="summaryGrid"></div>
+
+    <div class="card">
+      <div class="card-label">Flask endpoint</div>
+      <input type="text" id="flaskEndpoint" value="/api/schedule" placeholder="bijv. /api/schedule of http://localhost:5000/api/schedule">
+      <div class="input-hint">POST endpoint waar de JSON naartoe wordt gestuurd.</div>
+    </div>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="spinner"></div>
+      <div class="progress-text">Versturen naar Flask...</div>
+    </div>
+
+    <div class="success-block" id="successBlock">
+      <div class="success-icon">✓</div>
+      <h3>Verstuurd!</h3>
+      <p>Flask response:</p>
+      <div class="response-preview" id="responsePreview"></div>
+      <button class="btn btn-secondary" onclick="resetAll()">Nieuw rooster</button>
+    </div>
+
+    <div class="error-msg" id="genError"></div>
+
+    <div class="nav-row" id="step4Nav">
+      <button class="btn btn-secondary" onclick="goStep(3)">← Terug</button>
+      <button class="btn btn-primary" onclick="sendToFlask()">▶ Verstuur naar Flask</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+
+let state = {
+  grades: new Set(),
+  roomsLow: [],
+  roomsHigh: [],
+  clusters: {}
+};
+
+let currentStep = 1;
+const TOTAL_STEPS = 4;
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+
+function init() {
+  const dotsEl = document.getElementById('stepDots');
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i === 1 ? ' active' : '');
+    d.id = `dot-${i}`;
+    dotsEl.appendChild(d);
+  }
+
+  const grid = document.getElementById('gradeGrid');
+  for (let g = 1; g <= 6; g++) {
+    const btn = document.createElement('button');
+    btn.className = 'grade-btn';
+    btn.textContent = g;
+    btn.onclick = () => toggleGrade(g, btn);
+    grid.appendChild(btn);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+
+function goStep(n) {
+  if (n > currentStep) {
+    if (currentStep === 1 && !validateGrades()) return;
+    if (currentStep === 2 && !validateRooms()) return;
+  }
+
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  currentStep = n;
+  document.getElementById(`step-${n}`).classList.add('active');
+
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    if (i < n)      dot.className = 'step-dot done';
+    else if (i === n) dot.className = 'step-dot active';
+    else            dot.className = 'step-dot';
+  }
+
+  if (n === 2) setupRoomsStep();
+  if (n === 3) setupClustersStep();
+  if (n === 4) setupSummary();
+}
+
+// ═══════════════════════════════════════════════════════
+// STEP 1
+// ═══════════════════════════════════════════════════════
+
+function toggleGrade(g, btn) {
+  if (state.grades.has(g)) {
+    state.grades.delete(g);
+    btn.classList.remove('selected');
+  } else {
+    state.grades.add(g);
+    btn.classList.add('selected');
+  }
+  document.getElementById('gradeError').classList.remove('visible');
+}
+
+function validateGrades() {
+  if (state.grades.size === 0) {
+    document.getElementById('gradeError').classList.add('visible');
+    return false;
+  }
+  return true;
+}
+
+function hasLow()  { return [...state.grades].some(g => g <= 3); }
+function hasHigh() { return [...state.grades].some(g => g >= 4); }
+
+// ═══════════════════════════════════════════════════════
+// STEP 2
+// ═══════════════════════════════════════════════════════
+
+function setupRoomsStep() {
+  document.getElementById('roomsLow').style.display  = hasLow()  ? 'block' : 'none';
+  document.getElementById('roomsHigh').style.display = hasHigh() ? 'block' : 'none';
+}
+
+function focusTagInput(id) { document.getElementById(id).focus(); }
+
+function handleTagKey(e, tier) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const input = e.target;
+    const val = input.value.trim().replace(',', '');
+    if (!val) return;
+    addRoom(tier, val);
+    input.value = '';
+  } else if (e.key === 'Backspace' && e.target.value === '') {
+    const arr = tier === 'low' ? state.roomsLow : state.roomsHigh;
+    if (arr.length) { arr.pop(); renderRoomTags(tier); }
+  }
+}
+
+function addRoom(tier, val) {
+  const arr = tier === 'low' ? state.roomsLow : state.roomsHigh;
+  if (!arr.includes(val)) { arr.push(val); renderRoomTags(tier); }
+}
+
+function removeRoom(tier, val) {
+  if (tier === 'low') state.roomsLow = state.roomsLow.filter(r => r !== val);
+  else               state.roomsHigh = state.roomsHigh.filter(r => r !== val);
+  renderRoomTags(tier);
+}
+
+function renderRoomTags(tier) {
+  const wrap  = document.getElementById(tier === 'low' ? 'tagWrapLow'   : 'tagWrapHigh');
+  const input = document.getElementById(tier === 'low' ? 'tagInputLow'  : 'tagInputHigh');
+  const arr   = tier === 'low' ? state.roomsLow : state.roomsHigh;
+
+  Array.from(wrap.children).forEach(c => { if (c !== input) c.remove(); });
+  arr.forEach(room => {
+    const tag = document.createElement('div');
+    tag.className = 'room-tag';
+    tag.innerHTML = `${room}<button onclick="removeRoom('${tier}','${room}')" tabindex="-1">×</button>`;
+    wrap.insertBefore(tag, input);
+  });
+}
+
+function validateRooms() {
+  const errEl = document.getElementById('roomError');
+  if (hasLow()  && state.roomsLow.length  === 0) { errEl.classList.add('visible'); return false; }
+  if (hasHigh() && state.roomsHigh.length === 0) { errEl.classList.add('visible'); return false; }
+  errEl.classList.remove('visible');
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════
+// STEP 3
+// ═══════════════════════════════════════════════════════
+
+function setupClustersStep() {
+  const high = hasHigh();
+  document.getElementById('noClusters').style.display    = !high ? 'block' : 'none';
+  document.getElementById('clustersSection').style.display = high ? 'block' : 'none';
+  if (!high) return;
+
+  const builder = document.getElementById('clusterBuilder');
+  builder.innerHTML = '';
+
+  const highGrades = [...state.grades].filter(g => g >= 4).sort();
+  highGrades.forEach(g => {
+    if (!state.clusters[g]) state.clusters[g] = [];
+    const sec = document.createElement('div');
+    sec.className = 'cluster-grade-section card';
+    sec.innerHTML = `
+      <div class="cluster-grade-header">▸ Leerjaar ${g}</div>
+      <div class="cluster-list" id="clusterList-${g}"></div>
+      <div class="add-cluster-row">
+        <input type="text" id="clusterInput-${g}" placeholder="bijv. bio,nat" style="font-family:var(--mono); font-size:12px">
+        <button class="btn-icon" onclick="addCluster(${g})" title="Toevoegen">+</button>
+      </div>
+      <div class="input-hint" style="margin-top:6px">Kommagescheiden vakken per cluster. Druk op + of Enter.</div>
+    `;
+    sec.querySelector(`#clusterInput-${g}`).addEventListener('keydown', e => {
+      if (e.key === 'Enter') addCluster(g);
+    });
+    builder.appendChild(sec);
+    renderClusters(g);
+  });
+}
+
+function addCluster(grade) {
+  const input = document.getElementById(`clusterInput-${grade}`);
+  const val = input.value.trim();
+  if (!val) return;
+  const subjects = val.split(',').map(s => s.trim()).filter(Boolean);
+  if (subjects.length < 2) { alert('Voer minimaal 2 vakken in voor een cluster.'); return; }
+  state.clusters[grade].push(subjects);
+  input.value = '';
+  renderClusters(grade);
+}
+
+function removeCluster(grade, idx) {
+  state.clusters[grade].splice(idx, 1);
+  renderClusters(grade);
+}
+
+function renderClusters(grade) {
+  const list = document.getElementById(`clusterList-${grade}`);
+  list.innerHTML = '';
+  state.clusters[grade].forEach((cluster, i) => {
+    const item = document.createElement('div');
+    item.className = 'cluster-item';
+    item.innerHTML = `
+      <div class="subjects">${cluster.map(s => `<span class="cluster-subject-tag">${s}</span>`).join('')}</div>
+      <button class="btn btn-danger" onclick="removeCluster(${grade}, ${i})">✕</button>
+    `;
+    list.appendChild(item);
+  });
+  if (!state.clusters[grade].length) {
+    list.innerHTML = '<div style="color:var(--muted);font-family:var(--mono);font-size:11px;padding:4px 0">Geen clusters gedefinieerd</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// STEP 4
+// ═══════════════════════════════════════════════════════
+
+function setupSummary() {
+  const grid = document.getElementById('summaryGrid');
+  const sortedGrades = [...state.grades].sort();
+  const clusterCount = Object.values(state.clusters).reduce((a, c) => a + c.length, 0);
+
+  grid.innerHTML = `
+    <div class="summary-item"><div class="key">Leerjaren</div><div class="val">${sortedGrades.join(', ')}</div></div>
+    <div class="summary-item"><div class="key">Onderbouw lokalen</div><div class="val">${hasLow()  ? state.roomsLow.join(', ')  : '—'}</div></div>
+    <div class="summary-item"><div class="key">Bovenbouw lokalen</div><div class="val">${hasHigh() ? state.roomsHigh.join(', ') : '—'}</div></div>
+    <div class="summary-item"><div class="key">Clusters</div><div class="val">${clusterCount} gedefinieerd</div></div>
+  `;
+
+  document.getElementById('progressWrap').classList.remove('visible');
+  document.getElementById('successBlock').classList.remove('visible');
+  document.getElementById('responsePreview').classList.remove('visible');
+  document.getElementById('step4Nav').style.display = 'flex';
+  document.getElementById('genError').classList.remove('visible');
+}
+
+// ═══════════════════════════════════════════════════════
+// POST TO FLASK
+// ═══════════════════════════════════════════════════════
+
+async function sendToFlask() {
+  const errEl    = document.getElementById('genError');
+  const endpoint = document.getElementById('flaskEndpoint').value.trim() || '/api/schedule';
+  errEl.classList.remove('visible');
+
+  const payload = {
+    grades:     [...state.grades].sort(),
+    rooms_low:  state.roomsLow,
+    rooms_high: state.roomsHigh,
+    clusters:   state.clusters
+  };
+
+  document.getElementById('step4Nav').style.display = 'none';
+  document.getElementById('progressWrap').classList.add('visible');
+
+  try {
+    const res = await fetch(endpoint, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || res.statusText);
+    }
+
+    // Blob downloaden als .xlsx
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'toetsweek_rooster.xlsx';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    document.getElementById('progressWrap').classList.remove('visible');
+    document.getElementById('successBlock').classList.add('visible');
+
+  } catch (err) {
+    document.getElementById('progressWrap').classList.remove('visible');
+    document.getElementById('step4Nav').style.display = 'flex';
+    errEl.textContent = `Fout: ${err.message}`;
+    errEl.classList.add('visible');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// RESET
+// ═══════════════════════════════════════════════════════
+
+function resetAll() {
+  state.grades    = new Set();
+  state.roomsLow  = [];
+  state.roomsHigh = [];
+  state.clusters  = {};
+
+  document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('selected'));
+  renderRoomTags('low');
+  renderRoomTags('high');
+  goStep(1);
+}
+
+init();
+</script>
+</body>
+</html>
