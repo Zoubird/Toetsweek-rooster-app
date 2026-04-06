@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory, send_file
 from sched import Scheduler, UpperScheduler
 from other.vars import schedule, schedule_upper, data, classes
 from excelgen import generate_timetable
+from openpyxl import Workbook
 import copy
 import io
 
@@ -39,7 +40,8 @@ def run_schedule():
         "classes":         selected_classes
     }
 
-    wb = None
+    wb = Workbook()
+    wb.remove(wb.active)
 
     if has_low:
         low_sched = copy.deepcopy(schedule)
@@ -54,10 +56,10 @@ def run_schedule():
             "classes": {g: selected_classes[g] for g in grades if g <= 3 and g in selected_classes}
         }
 
-        wb = generate_timetable(
+        generate_timetable(
             Scheduler(config=low_config).exams(),
             title="Toetsweek Rooster FULLY CLAUDE CODED HAHAHAHEZ",
-            output_path=None  # <-- zie hieronder
+            output_path=None, wb=wb, sheet_name="Onderbouw"
         )
 
     if has_high:
@@ -73,10 +75,10 @@ def run_schedule():
             "classes": {g: selected_classes[g] for g in grades if g > 3 and g in selected_classes}
         }
 
-        wb = generate_timetable(
+        generate_timetable(
             UpperScheduler(config=high_config).exams(),
-            title="Toetsweek Rooster — Bovenbouw",
-            output_path=None
+            title="Toetsweek Rooster FULLY CLAUDE CODED HAHAHAHEZ",
+            output_path=None, wb=wb, sheet_name="Bovenbouw"
         )
 
     # Schrijf workbook naar memory buffer in plaats van naar disk
