@@ -118,7 +118,7 @@ def generate_timetable(schedule: dict, title: str = "Toetsweek", output_path: st
 
         # ── Sub-header row ───────────────────────────────────────────────────
         sub_row = current_row
-        sub_headers = ["start/einde", "uur", "klas", "vak", "surv."]
+        sub_headers = ["duur", "uur", "klas", "vak", "surv."]
         for r_idx in range(NUM_ROOMS):
             base = room_col_start(r_idx)
             for i, lbl in enumerate(sub_headers):
