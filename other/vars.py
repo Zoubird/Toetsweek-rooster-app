@@ -39,8 +39,8 @@ data_upper = {
         '4HB': {"netl": 3, "en": 1, "maat": 1},
         '4HC': {"netl": 3, "en": 1, "maat": 1},
         '4H': {
-            "groups": {"eco": 2, "wisA": 2, "wisB": 1, "sk": 2, "nlt": 1, "na": 1, "ges": 2, "bio": 2}, # Groups per subject
-            "sub": {"eco": 2, "wisA": 2, "wisB": 2, "sk": 1, "nlt": 2, "na": 1, "ges": 1, "bio": 2} # Duration of each subject
+            "groups": {"eco": 2, "wisA": 2, "wisB": 1, "sk": 2, "nlt": 1, "nat": 1, "ges": 2, "bio": 2}, # Groups per subject
+            "sub": {"eco": 2, "wisA": 2, "wisB": 2, "sk": 1, "nlt": 2, "nat": 1, "ges": 1, "bio": 2} # Duration of each subject
         },
         '4VA': {"netl": 3, "maat": 1, "entl": 1},
         '4VB': {"netl": 3, "maat": 1, "entl": 1},
@@ -51,8 +51,8 @@ data_upper = {
         '5HA': {"netl": 3, "en": 1},
         '5HB': {"netl": 3, "en": 1},
         '5H': {
-            "groups": {"eco": 1, "na": 1, "ges": 1, "sk": 1, "wisA": 1, "wisB": 1, "beco": 1, "bio": 1, "fatl": 1, "dutl": 1}, # Groups per subject
-            "sub": {"eco": 2, "na": 2, "ges": 2, "sk": 2, "wisA": 3, "wisB": 3, "beco": 2, "bio": 2, "fatl": 1, "dutl": 1} # Duration of each subject
+            "groups": {"eco": 1, "nat": 1, "ges": 1, "sk": 1, "wisA": 1, "wisB": 1, "beco": 1, "bio": 1, "fatl": 1, "dutl": 1}, # Groups per subject
+            "sub": {"eco": 2, "nat": 2, "ges": 2, "sk": 2, "wisA": 3, "wisB": 3, "beco": 2, "bio": 2, "fatl": 1, "dutl": 1} # Duration of each subject
         },
         '5VA': {"netl": 3, "entl": 1},
         '5VB': {"netl": 3, "entl": 1},
