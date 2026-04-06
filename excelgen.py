@@ -2,7 +2,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side, PatternFill
 from openpyxl.utils import get_column_letter
 
-def generate_timetable(schedule: dict, title: str = "Toetsweek", output_path: str = "timetable.xlsx"):
+def generate_timetable(schedule: dict, title: str = "Toetsweek", output_path: str = "timetable.xlsx", wb=None, sheet_name="Timetable"):
     """
     schedule: dict of shape {day_name: {period_num: {"exams": [Exam, ...], "rooms": [...]}}}
     title: spreadsheet title shown in the header
@@ -17,9 +17,12 @@ def generate_timetable(schedule: dict, title: str = "Toetsweek", output_path: st
         for exam in period_data["exams"]
     })
 
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Timetable"
+    if wb is None:
+        wb = Workbook()
+        ws = ws
+        ws.title = sheet_name
+    else:
+        ws = wb.create_sheet(title=sheet_name)
 
     # ── Styles ──────────────────────────────────────────────────────────────
     BLUE_FILL   = PatternFill("solid", fgColor="BDD7EE")   # room header
