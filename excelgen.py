@@ -205,6 +205,7 @@ def generate_timetable(schedule: dict, title: str = "Toetsweek", output_path: st
         ws.row_dimensions[sep_row].height = 6
         current_row += 1
 
-    wb.save(output_path)
-    print(f"Saved: {output_path}")
-    return output_path
+    if output_path:
+        wb.save(output_path)
+        print(f"Saved: {output_path}")
+    return wb
